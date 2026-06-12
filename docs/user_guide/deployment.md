@@ -141,6 +141,48 @@ Its sole responsibilities are:
 
 It has no knowledge of domain names, TLS, or upstream services. Those concerns belong to the infrastructure layer.
 
+## Infrastructure nginx entrypoint script
+
+The infrastructure nginx container uses a custom entrypoint script (`nginx/docker-entrypoint.sh`) to inject the deployment domain name into the nginx config at container startup, avoiding hardcoded domain names in the config files.
+
+### Why it is needed
+
+nginx config files do not natively support environment variables. The standard approach of mounting a template and using `envsubst` to substitute variables works, but `envsubst` replaces all `$variable` occurrences — including nginx's own variables like `$host`, `$remote_addr`, and `$proxy_add_x_forwarded_for`. The entrypoint script solves this by passing an explicit list of variables to substitute, leaving nginx's own variables untouched.
+
+### How it works
+
+```bash
+#!/bin/sh
+envsubst '${NGINX_DOMAIN}' < /etc/nginx/templates/app.conf.template > /etc/nginx/conf.d/app.conf
+exec nginx -g 'daemon off;'
+```
+
+At startup it does two things:
+
+1. Runs `envsubst` on `app.conf.template`, substituting only `${NGINX_DOMAIN}` and writing the result to `/etc/nginx/conf.d/app.conf` — the live config nginx reads
+2. Hands off to nginx via `exec`, which replaces the shell process so nginx runs as PID 1 and receives signals correctly
+
+### Passing the domain
+
+`NGINX_DOMAIN` is passed as an environment variable at deploy time via the Makefile:
+
+```bash
+NGINX_DOMAIN=pathway.munich-quantum-valley.de docker compose up -d
+```
+
+Or set it in an `.env` file next to the infra `docker-compose.yml` on the server so it does not need to be typed on every deploy:
+
+```dotenv
+# infra/.env  (not committed to the repository)
+NGINX_DOMAIN=pathway.munich-quantum-valley.de
+```
+
+Docker Compose picks up `.env` automatically, so `docker compose up -d` is then sufficient.
+
+!!! warning
+    The entrypoint script must be executable. If you clone the repository on a new machine and the script loses its execute permission, fix it with `chmod +x nginx/docker-entrypoint.sh` before bringing up the stack.
+
+
 ## Connection to the backend
 
 The app container joins the shared `mqp-web` Docker network at startup. It does not publish any ports to the host directly.
@@ -182,14 +224,14 @@ docker compose run --rm --entrypoint certbot certbot certonly \
   --email your@email.com \
   --agree-tos \
   --no-eff-email \
-  -d pathway.munich-quantum-valley.de
+  -d app.example.com
 ```
  
 Once the command completes successfully, the certificate files will be available at:
  
 ```
-/etc/letsencrypt/live/pathway.munich-quantum-valley.de/fullchain.pem
-/etc/letsencrypt/live/pathway.munich-quantum-valley.de/privkey.pem
+/etc/letsencrypt/live/app.example.com/fullchain.pem
+/etc/letsencrypt/live/app.example.com/privkey.pem
 ```
  
 These are stored in the `certbot_conf` Docker volume and mounted into the nginx container.
