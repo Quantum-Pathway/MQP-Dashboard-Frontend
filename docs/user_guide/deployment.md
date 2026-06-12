@@ -155,6 +155,67 @@ The `Content-Security-Policy: frame-ancestors *.example.com` header set by the i
 
 No Grafana configuration lives in this repository.
 
+## TLS — Let's Encrypt certificate
+ 
+TLS is handled entirely at the infrastructure level by certbot and the infrastructure nginx. The app container has no knowledge of certificates.
+ 
+### First-time certificate issuance
+ 
+Before issuing a certificate, ensure:
+ 
+- The domain DNS A record points to the server's public IP
+- Port 80 is reachable from the internet (required for the ACME HTTP challenge)
+- The infrastructure stack is running with the HTTP-only nginx config
+Bring up the infrastructure stack first:
+ 
+```bash
+cd infra
+NGINX_DOMAIN=pathway.munich-quantum-valley.de docker compose up -d
+```
+ 
+Then issue the certificate:
+ 
+```bash
+docker compose run --rm --entrypoint certbot certbot certonly \
+  --webroot \
+  --webroot-path /var/www/certbot \
+  --email your@email.com \
+  --agree-tos \
+  --no-eff-email \
+  -d pathway.munich-quantum-valley.de
+```
+ 
+Once the command completes successfully, the certificate files will be available at:
+ 
+```
+/etc/letsencrypt/live/pathway.munich-quantum-valley.de/fullchain.pem
+/etc/letsencrypt/live/pathway.munich-quantum-valley.de/privkey.pem
+```
+ 
+These are stored in the `certbot_conf` Docker volume and mounted into the nginx container.
+
+### Enabling HTTPS in nginx
+ 
+After the certificate is issued, update the infrastructure nginx config to add the HTTPS server block and reload:
+ 
+```bash
+docker exec nginx nginx -s reload
+```
+ 
+nginx will now serve HTTPS on port 443 and redirect all HTTP traffic to HTTPS.
+ 
+### Automatic renewal
+ 
+The certbot service runs a renewal loop in the background, checking every 12 hours and renewing certificates that are within 30 days of expiry. No manual intervention is needed after the first issuance.
+ 
+To verify the renewal process manually:
+ 
+```bash
+docker compose logs certbot
+```
+ 
+The output `No renewals were attempted` is expected when the certificate is not yet due for renewal.
+
 ## Updating a deployment
 
 To deploy a new version of the app:
