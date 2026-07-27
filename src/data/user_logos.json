@@ -1,8 +1,8 @@
 [
   {
     "name": "landing_page_logo",
-    "file_name": "placeholder_landing",
-    "file_ext": ".svg",
+    "file_name": "MQV_LOGO_F_BUNT_BLK_RGB",
+    "file_ext": ".png",
     "alt": "Organization Logo",
     "link": "",
     "width": "100%",
@@ -10,9 +10,18 @@
   },
   {
     "name": "sidebar_logo",
-    "file_name": "placeholder_sidebar",
-    "file_ext": ".svg",
+    "file_name": "MQV_LOGO_F_BUNT_BLK_RGB",
+    "file_ext": ".png",
     "alt": "Organization Icon",
+    "link": "",
+    "width": "100%",
+    "height": "auto"
+  },
+  {
+    "name": "landing_background",
+    "file_name": "MQVwall",
+    "file_ext": ".png",
+    "alt": "Landing page background image",
     "link": "",
     "width": "100%",
     "height": "auto"

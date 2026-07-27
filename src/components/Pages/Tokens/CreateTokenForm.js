@@ -15,27 +15,24 @@ import { updateExpiration } from '@utils/tokens';
 import SuccessfullyToken from '@components/Pages/Tokens/SuccessfullyToken';
 import AlertCard from '@components/UI/MessageBox/AlertCard';
 import BlankCard from '@components/UI/Card/BlankCard';
-import { getAuthToken } from '@utils/auth';
 
 registerLocale('de', de);
 setDefaultLocale('de');
 
-function CreateTokenForm({ userLimits }) {
+function CreateTokenForm({ userLimits, access_token }) {
   const darkmode = useSelector((state) => state.accessibilities.darkmode);
   const fs = useSelector((state) => state.accessibilities.font_size);
   const text_fs = +fs;
   const small_fs = +fs * 0.8;
 
-  const access_token = getAuthToken();
-
-  const [expiration, setExpiration] = useState('');
+  const [expiration, setExpiration] = useState("");
 
   const {
     value: tokenName,
     handleInputChange: handleTokenNameChange,
     handleInputBlur: handleTokenNameBlur,
     hasError: tokenNameHasError,
-  } = useInput('', (value) => isNotEmpty(value));
+  } = useInput("", (value) => isNotEmpty(value));
 
   const {
     value: maxJobs,
@@ -56,7 +53,7 @@ function CreateTokenForm({ userLimits }) {
   const { mutate, data, isPending, isError, error } = useMutation({
     mutationFn: createNewToken,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tokens'] });
+      queryClient.invalidateQueries({ queryKey: ["tokens"] });
     },
   });
 
@@ -81,7 +78,7 @@ function CreateTokenForm({ userLimits }) {
 
   if (!userLimits || Object.keys(userLimits).length === 0) {
     return (
-      <BlankCard className={`${darkmode ? 'dark_bg' : 'white_bg'} h-100`}>
+      <BlankCard className={`${darkmode ? "dark_bg" : "white_bg"} h-100`}>
         <p>User limits is undefined!</p>
       </BlankCard>
     );
@@ -105,7 +102,11 @@ function CreateTokenForm({ userLimits }) {
             <div className="row mx-0 ">
               <div className="col-12 col-xl-6 ">
                 <div className="form-group mb-3 token_input">
-                  <label htmlFor="token_name" className="form-label" style={{ fontSize: text_fs }}>
+                  <label
+                    htmlFor="token_name"
+                    className="form-label"
+                    style={{ fontSize: text_fs }}
+                  >
                     Token Name *
                   </label>
                   <input
@@ -114,17 +115,23 @@ function CreateTokenForm({ userLimits }) {
                     name="token_name"
                     className={`${
                       tokenNameHasError
-                        ? 'form-control invalid_input'
-                        : 'form-control token_name_field'
+                        ? "form-control invalid_input"
+                        : "form-control token_name_field"
                     }`}
                     value={tokenName}
                     onChange={handleTokenNameChange}
                     onBlur={handleTokenNameBlur}
                   />
-                  {tokenNameHasError && <p className="error-text">Token name must not be empty!</p>}
+                  {tokenNameHasError && (
+                    <p className="error-text">Token name must not be empty!</p>
+                  )}
                 </div>
                 <div className="form-group mb-3 token_input">
-                  <label htmlFor="validity" className="form-label" style={{ fontSize: text_fs }}>
+                  <label
+                    htmlFor="validity"
+                    className="form-label"
+                    style={{ fontSize: text_fs }}
+                  >
                     Validity *
                   </label>
                   <input
@@ -139,14 +146,21 @@ function CreateTokenForm({ userLimits }) {
                     onChange={handleValidityChange}
                     onBlur={handleValidityBlur}
                   />
-                  <div className="range_value_wrap" style={{ fontSize: text_fs }}>
+                  <div
+                    className="range_value_wrap"
+                    style={{ fontSize: text_fs }}
+                  >
                     <span id="validity_value">{validity}</span>
                     <span>/{userLimits.max_lifetime} day(s)</span>
                   </div>
                 </div>
 
                 <div className="form-group mb-3 tokeninput">
-                  <label htmlFor="expiration" className="form-label" style={{ fontSize: text_fs }}>
+                  <label
+                    htmlFor="expiration"
+                    className="form-label"
+                    style={{ fontSize: text_fs }}
+                  >
                     Expiration (read only)
                   </label>
                   <input
@@ -166,7 +180,11 @@ function CreateTokenForm({ userLimits }) {
                     tooltip="The number of jobs that token is used for"
                     placement="top"
                   >
-                    <label htmlFor="max_jobs" className="form-label" style={{ fontSize: text_fs }}>
+                    <label
+                      htmlFor="max_jobs"
+                      className="form-label"
+                      style={{ fontSize: text_fs }}
+                    >
                       Maximum Job Count *
                     </label>
                   </CustomTooltip>
@@ -181,7 +199,10 @@ function CreateTokenForm({ userLimits }) {
                     onChange={handleMaxJobsChange}
                     onBlur={handleMaxJobsBlur}
                   />
-                  <div className="range_value_wrap" style={{ fontSize: text_fs }}>
+                  <div
+                    className="range_value_wrap"
+                    style={{ fontSize: text_fs }}
+                  >
                     <span id="max_jobs_value">{maxJobs}</span>
                     <span>/{userLimits.max_jobs}</span>
                   </div>
@@ -211,7 +232,10 @@ function CreateTokenForm({ userLimits }) {
                     onChange={handleMaxBudgetsChange}
                     onBlur={handleMaxBudgetsBlur}
                   />
-                  <div className="range_value_wrap" style={{ fontSize: text_fs }}>
+                  <div
+                    className="range_value_wrap"
+                    style={{ fontSize: text_fs }}
+                  >
                     <span id="max_budgets_value">{maxBudgets}</span>
                     <span>/{userLimits.max_budget}</span>
                   </div>
@@ -220,8 +244,12 @@ function CreateTokenForm({ userLimits }) {
             </div>
             <div className="row mx-0">
               <div className="col-12 my-4 actions">
-                <Button type="submit" className="createToken_btn" style={{ fontSize: text_fs }}>
-                  {isPending ? 'Submitting...' : 'Submit'}
+                <Button
+                  type="submit"
+                  className="createToken_btn"
+                  style={{ fontSize: text_fs }}
+                >
+                  {isPending ? "Submitting..." : "Submit"}
                 </Button>
                 <Link
                   to="/tokens"

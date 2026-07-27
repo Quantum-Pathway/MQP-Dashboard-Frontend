@@ -1,39 +1,52 @@
-import React from 'react';
-import { redirect, useSubmit } from 'react-router-dom';
+import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { authActions } from '@store/auth-slice';
+import { logout } from '@store/auth-sso-slice';
 
-/** Logout button component */
+/* Logs out from Keycloak and redirects to Keycloak login */
 const Logout = ({ onHidden }) => {
-  const submit = useSubmit();
   const dispatch = useDispatch();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const fs = useSelector((state) => state.accessibilities.font_size);
   const navbar_fs = +fs * 1.1;
 
-  const logoutHandler = () => {
-    dispatch(authActions.logout());
-    submit(null, { method: 'POST', action: '/logout' });
+  
+  const logoutHandler = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+    setIsLoggingOut(true);
+    try {
+      await dispatch(logout({ reason: "manual" })).unwrap();
+    } catch (error) {
+      console.error(
+        "Keycloak logout failed: ",
+        error
+      );
+      setIsLoggingOut(false);
+    }
+    
   };
 
   return (
     <React.Fragment>
-      <form method="POST" onSubmit={logoutHandler}>
-        <button className="logout_btn" type="submit" style={{ fontSize: navbar_fs }}>
-          <span className="logout_icon"></span>
-          {onHidden && <span className="link_text">Log Out</span>}
+      <button
+        className="logout_btn"
+        type="button"
+        onClick={logoutHandler}
+        disabled={isLoggingOut}
+        style={{ fontSize: navbar_fs }}
+        aria-label="Log out"
+      >
+          <span className="logout_icon" aria-hidden="true"></span>
+        {onHidden && (
+          <span className="link_text">
+            {isLoggingOut ? "Logging out..." : "Log Out"}
+          </span>
+        )}
         </button>
-      </form>
     </React.Fragment>
   );
 };
 
 export default Logout;
 
-/** Route action - clears session data and redirects to login */
-export function action() {
-  localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('token');
-  localStorage.removeItem('isReset');
-  localStorage.removeItem('expiration');
-  return redirect('/login');
-}

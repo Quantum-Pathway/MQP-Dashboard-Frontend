@@ -6,14 +6,17 @@ import CreateTokenForm from '@components/Pages/Tokens/CreateTokenForm';
 import { fetchUserLimits } from '@utils/tokens-http';
 import ErrorBlock from '@components/UI/MessageBox/ErrorBlock';
 import LoadingIndicator from '@components/UI/LoadingIndicator';
-import { getAuthToken } from '@utils/auth';
+import authService from "../../../auth/authService";
 
 const NewToken = () => {
   const darkmode = useSelector((state) => state.accessibilities.darkmode);
   const fs = useSelector((state) => state.accessibilities.font_size);
   const page_header_fs = +fs * 1.5;
 
-  const access_token = getAuthToken();
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['userLimits'],
     queryFn: ({ signal }) => fetchUserLimits({ signal, access_token }),
@@ -31,7 +34,7 @@ const NewToken = () => {
   }
 
   if (data) {
-    newTokenContent = <CreateTokenForm key="create_form" userLimits={data} />;
+    newTokenContent = <CreateTokenForm key="create_form" userLimits={data} access_token={access_token} />;
   }
 
   return (

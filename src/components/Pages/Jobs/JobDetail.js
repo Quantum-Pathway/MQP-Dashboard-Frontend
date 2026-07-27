@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLoaderData } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
-import { getAuthToken } from '@utils/auth';
+import authService from '../../../auth/authService';
 import ContentCard from '@components/UI/Card/ContentCard';
 
 import { queryClient } from '@utils/query';
@@ -226,7 +226,10 @@ export default JobDetail;
  */
 export async function loader({ params }) {
   // Get authentication token for API request
-  const access_token = getAuthToken();
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
 
   // Fetch job data using React Query
   const job = await queryClient.fetchQuery({

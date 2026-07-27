@@ -4,15 +4,18 @@ import ContentCard from '@components/UI/Card/ContentCard';
 import { useQuery } from '@tanstack/react-query';
 import { fetchResources } from '@utils/resources-http';
 import ResourcesList from '@components/Pages/Resources/ResourcesList';
-
 import LoadingIndicator from '@components/UI/LoadingIndicator';
 import ErrorBlock from '@components/UI/MessageBox/ErrorBlock';
-import { getAuthToken } from '@utils/auth';
+import authService from "../../../auth/authService";
+
 import './Resources.scss';
 
 function Resources() {
-  const access_token = getAuthToken();
   const darkmode = useSelector((state) => state.accessibilities.darkmode);
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['resources'],

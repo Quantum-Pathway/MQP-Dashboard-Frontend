@@ -1,14 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useRouteLoaderData } from 'react-router-dom';
-
 import Navigation from './Navigation';
 import UserNavigation from './UserNav';
 import AccessibilitiesNavbar from '@components/Layout/TopBar/AccessibilitiesNavbar';
 
 /** Mobile navigation menu with slide-down animation */
 function ResponsiveMainNavigation({ onDarkmode, onDecreaseFS, onResetFS, onIncreaseFS }) {
-  const token = useRouteLoaderData('home');
 
   const darkmodeHandler = () => {
     onDarkmode();
@@ -28,8 +25,8 @@ function ResponsiveMainNavigation({ onDarkmode, onDecreaseFS, onResetFS, onIncre
       className={`responsive_sidebar `}
       id="res_main_navigation"
       initial={{ height: 0 }}
-      animate={{ height: 'auto' }}
-      transition={{ duration: 0.6, type: 'spring', ease: 'all' }}
+      animate={{ height: "auto" }}
+      transition={{ duration: 0.6, type: "spring", ease: "all" }}
       exit={{ height: 0 }}
     >
       <div className="main_navigation">
@@ -42,10 +39,9 @@ function ResponsiveMainNavigation({ onDarkmode, onDecreaseFS, onResetFS, onIncre
             onIncreaseFS={increaseFontSizeHandler}
           />
           <hr className="menu_divider" />
-
-          {token && <Navigation onHidden={true} />}
+          <Navigation onHidden={true} />
+          
           <hr className="menu_divider" />
-
           <UserNavigation onHidden={true} />
         </div>
       </div>

@@ -9,15 +9,13 @@ import { revokeToken } from '@utils/tokens-http';
 import NotificationCard from '@components/UI/MessageBox/NotificationCard';
 import BlankCard from '@components/UI/Card/BlankCard';
 import AlertCard from '@components/UI/MessageBox/AlertCard';
-import { getAuthToken } from '@utils/auth';
 
-function TokensList({ tokens }) {
+function TokensList({ tokens, access_token }) {
   const darkmode = useSelector((state) => state.accessibilities.darkmode);
   const fs = useSelector((state) => state.accessibilities.font_size);
   const table_label_fs = +fs * 1.05;
   const page_header_fs = +fs * 1.5;
 
-  const access_token = getAuthToken();
   const navigate = useNavigate();
   const activatedTokens = tokens.filter((token) => token.revoked === false);
   //const revokedTokens = tokens.filter((token) => token.revoked === true);
@@ -25,8 +23,8 @@ function TokensList({ tokens }) {
   const { mutate, isError, error, data } = useMutation({
     mutationFn: revokeToken,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tokens'] });
-      navigate('/tokens');
+      queryClient.invalidateQueries({ queryKey: ["tokens"] });
+      navigate("/tokens");
     },
   });
   const revokeHandler = (tokenName) => {
@@ -34,7 +32,7 @@ function TokensList({ tokens }) {
   };
   if (tokens.length === 0) {
     return (
-      <BlankCard className={`${darkmode ? 'dark_bg' : 'white_bg'} h-100`}>
+      <BlankCard className={`${darkmode ? "dark_bg" : "white_bg"} h-100`}>
         <h5>No Token found.</h5>
       </BlankCard>
     );
@@ -47,7 +45,10 @@ function TokensList({ tokens }) {
       {activatedTokens && activatedTokens.length > 0 && (
         <div className="mb-5 activatedTokensList">
           <div className="tokenContainer_header_wrap">
-            <h4 className="mb-3 page_header" style={{ fontSize: page_header_fs }}>
+            <h4
+              className="mb-3 page_header"
+              style={{ fontSize: page_header_fs }}
+            >
               <span>Activated Tokens &nbsp;</span>
               <span className="">({activatedTokens.length})</span>
             </h4>
@@ -56,7 +57,10 @@ function TokensList({ tokens }) {
           <div className="responsive_container">
             <ul className="subTokensList">
               <li className="token_row_header">
-                <div className="token_column token_name" style={{ fontSize: table_label_fs }}>
+                <div
+                  className="token_column token_name"
+                  style={{ fontSize: table_label_fs }}
+                >
                   Token Name
                 </div>
                 <div className="token_column token_actions"></div>

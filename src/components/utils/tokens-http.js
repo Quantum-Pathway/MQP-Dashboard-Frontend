@@ -4,6 +4,8 @@
 
 // Fetch user's token creation limits (max tokens allowed)
 export async function fetchUserLimits({ signal, access_token }) {
+  console.log("token: ");
+  console.log(access_token);
   const fetch_url = process.env.REACT_APP_API_ENDPOINT + '/tokens/user_limits';
   const response = await fetch(fetch_url, {
     method: 'GET',

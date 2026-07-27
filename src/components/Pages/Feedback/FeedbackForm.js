@@ -6,7 +6,7 @@ import Button from '@components/UI/Button/Button';
 import AlertCard from '@components/UI/MessageBox/AlertCard';
 import { Form, Spinner } from 'react-bootstrap';
 import SuccessMessage from '@components/Pages/Feedback/SuccessMessage';
-import { getAuthToken } from '@utils/auth';
+import authService from "../../../auth/authService";
 import mqp_categories from '@data/mqp-categories.json';
 import default_ratings from '@data/ratings.json';
 
@@ -21,8 +21,10 @@ const FeedbackForm = () => {
   const [categoryValue, setCategoryValue] = useState(mqp_categories[0].name);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSucceed, setIsSucceed] = useState(false);
-  const access_token = getAuthToken();
-
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
   const {
     value: commentValue,
     handleInputChange: handleCommentChange,

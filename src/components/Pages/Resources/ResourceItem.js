@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-//import { Link } from "react-router-dom";
 import PaneCard from '@components/UI/Card/PaneCard';
 import IQM_logo from '@assets/images/IQM_logo.png';
 import Eviden_QLM_logo from '@assets/images/eviden-logo.png';

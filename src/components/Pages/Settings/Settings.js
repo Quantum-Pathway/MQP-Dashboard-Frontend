@@ -4,7 +4,7 @@ import ContentCard from '@components/UI/Card/ContentCard';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import AccountSettings from '@components/Pages/Settings/AccountSettings';
-//import AccessibilitiesSettings from "./AccessibilitiesSettings";
+
 
 import './Settings.scss';
 

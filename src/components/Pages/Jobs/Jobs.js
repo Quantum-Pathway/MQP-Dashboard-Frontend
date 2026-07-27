@@ -6,7 +6,7 @@ import LoadingIndicator from '@components/UI/LoadingIndicator';
 import ContentCard from '@components/UI/Card/ContentCard';
 import JobsSorting from '@components/Pages/Jobs/JobsSorting';
 import ErrorBlock from '@components/UI/MessageBox/ErrorBlock';
-import { getAuthToken } from '@utils/auth';
+import authService from "../../../auth/authService";
 import { queryFetchJobs } from '@utils/jobs-http';
 
 import './Jobs.scss';
@@ -15,7 +15,7 @@ import './Jobs.scss';
  * Jobs - Main jobs listing page with pagination, sorting, and status filtering
  */
 function Jobs() {
-  const access_token = getAuthToken();
+
   const darkmode = useSelector((state) => state.accessibilities.darkmode);
   const fs = useSelector((state) => state.accessibilities.font_size);
   const page_header_fs = +fs * 1.5;
@@ -42,6 +42,11 @@ function Jobs() {
     }
   };
 
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
+  
   // Fetch jobs with React Query, auto-refetches when filters/pagination change
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['jobs', page, sortKey, sortOrder, statusFilter],

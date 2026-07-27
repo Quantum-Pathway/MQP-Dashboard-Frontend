@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ContentCard from '@components/UI/Card/ContentCard';
-import { getAuthToken } from '@utils/auth';
 import './FAQ.scss';
 
 /**
@@ -467,15 +466,6 @@ function FAQ() {
 
   // Softer gold for dark mode, bright yellow for light mode
   const accentColor = darkmode ? '#c9a227' : '#ffe066';
-
-  // Redirect to login if session is expired
-  React.useEffect(() => {
-    const token = getAuthToken();
-    if (!token || token === 'EXPIRED') {
-      alert('Session expired. Please log in again.');
-      navigate('/login');
-    }
-  }, [navigate]);
 
   // Toggle category expansion on click
   const handleCategoryClick = (cat) => {

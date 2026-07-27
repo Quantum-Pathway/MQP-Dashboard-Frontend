@@ -6,7 +6,7 @@ import FormMessage from '@components/UI/MessageBox/AlertCard';
 import Button from '@components/UI/Button/Button';
 
 const AccountSettings = () => {
-  //const data = useActionData();
+
   const fs = useSelector((state) => state.accessibilities.font_size);
   const btn_fs = +fs * 1.1;
   const data = {

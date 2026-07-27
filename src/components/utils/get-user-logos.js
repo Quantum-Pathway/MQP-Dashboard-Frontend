@@ -19,3 +19,13 @@ export function getSidebarLogo() {
   });
   return sidebar_logo;
 }
+
+export function getLandingBackground() {
+  var background_image = '';
+  user_logos.forEach((image) => {
+    if (image.name === "landing_background") {
+      background_image = image;
+    }
+  });
+  return background_image;
+}

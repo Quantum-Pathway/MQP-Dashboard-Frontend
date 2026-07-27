@@ -4,6 +4,7 @@ import Button from '@components/UI/Button/Button';
 import ContentCard from '@components/UI/Card/ContentCard';
 import NotificationCard from '@components/UI/MessageBox/NotificationCard';
 import { useNavigate } from 'react-router-dom';
+
 const SuccessfullyToken = ({ newToken }) => {
   const fs = useSelector((state) => state.accessibilities.font_size);
   const page_subheader_fs = +fs * 1.25;

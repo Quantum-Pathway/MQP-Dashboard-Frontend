@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useLoaderData, useParams } from 'react-router-dom';
-import { getAuthToken } from '@utils/auth';
+import authService from "../../../auth/authService";
 import ContentCard from '@components/UI/Card/ContentCard';
 import { queryClient } from '@utils/query';
 import { fetchJob } from '@utils/jobs-http';
@@ -77,7 +77,10 @@ export default JobCircuit;
 
 // React Router loader - fetches job data before component renders
 export async function loader({ params }) {
-  const access_token = getAuthToken();
+  const access_token = authService.getAccessToken();
+  if (!access_token) {
+    throw new Error("No Keycloak access token is available.");
+  }
   return queryClient.fetchQuery({
     queryKey: ['jobs', params.jobId],
     queryFn: ({ signal }) => fetchJob({ signal, access_token, id: params.jobId }),
